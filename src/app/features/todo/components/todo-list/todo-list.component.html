@@ -1,0 +1,56 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>My Tasks</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar
+      placeholder="Add a new task..."
+      [(ngModel)]="newTodoTitle"
+      (keyup.enter)="addTodo()"
+      [showCancelButton]="'focus'"
+      animated>
+      <ion-button slot="end" fill="clear" (click)="addTodo()" [disabled]="!newTodoTitle.trim()">
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button>
+    </ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ng-container *ngIf="(todos$ | async)?.length; else emptyState">
+    <ion-list>
+      <ion-item-sliding *ngFor="let todo of todos$ | async">
+        <ion-item [class.completed]="todo.completed">
+          <ion-checkbox
+            slot="start"
+            [checked]="todo.completed"
+            (ionChange)="toggleTodo(todo.id)">
+          </ion-checkbox>
+          
+          <ion-label (click)="toggleTodo(todo.id)">
+            <h2>{{ todo.title }}</h2>
+            <p>{{ todo.createdAt | date:'MMM d, y • h:mm a' }}</p>
+          </ion-label>
+          
+          <ion-button fill="clear" color="danger" (click)="deleteTodo(todo.id)">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </ion-item-sliding>
+    </ion-list>
+  </ng-container>
+
+  <ng-template #emptyState>
+    <div class="empty-state">
+      <ion-icon name="checkmark-done-outline"></ion-icon>
+      <h3>No tasks yet</h3>
+      <p>Add your first task using the search bar above or the + button below</p>
+    </div>
+  </ng-template>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="addTodo()" [disabled]="!newTodoTitle.trim()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
