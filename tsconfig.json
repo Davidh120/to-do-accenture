@@ -19,10 +19,19 @@
     "target": "es2022",
     "module": "es2020",
     "lib": [
-      "es2018", 
+      "es2018",
       "dom"
     ],
-    "useDefineForClassFields": false
+    "types": [
+      "node"
+    ],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./node_modules/@ionic"
+    ],
+    "useDefineForClassFields": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
