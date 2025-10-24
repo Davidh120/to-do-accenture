@@ -5,7 +5,7 @@
     </ion-title>
     
     <ion-buttons slot="end">
-      <ion-button (click)="openCategoryManager()" fill="clear">
+      <ion-button *ngIf="canManageCategories()" (click)="openCategoryManager()" fill="clear">
         <ion-icon name="pricetags" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -20,7 +20,7 @@
         <ion-label>All</ion-label>
       </ion-segment-button>
       <ng-container *ngIf="(categories$ | async) as categories">
-        <ion-segment-button *ngFor="let category of categories" 
+        <ion-segment-button *ngFor="let category of categories; trackBy: trackByCategoryId" 
                           [value]="category.id"
                           [class.segment-button-checked]="selectedCategoryId === category.id">
           <ion-label>
@@ -50,7 +50,7 @@
         interfaceOptions="{ header: 'Select Category' }"
         class="category-select">
         <ion-select-option [value]="null">No Category</ion-select-option>
-        <ion-select-option *ngFor="let category of categories$ | async" [value]="category.id">
+        <ion-select-option *ngFor="let category of (categories$ | async); trackBy: trackByCategoryId" [value]="category.id">
           <ion-icon [name]="category.icon" [style.color]="category.color"></ion-icon>
           {{ category.name }}
         </ion-select-option>
@@ -71,7 +71,7 @@
   <!-- Todo List -->
   <div class="todo-list">
     <ion-list lines="none">
-      <ion-item-sliding *ngFor="let todo of filteredTodos$ | async">
+      <ion-item-sliding *ngFor="let todo of (filteredTodos$ | async); trackBy: trackByTodoId">
         <ion-item [class.completed]="todo.completed" class="todo-item">
           <ion-checkbox
             slot="start"

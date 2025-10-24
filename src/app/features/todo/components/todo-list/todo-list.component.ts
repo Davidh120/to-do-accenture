@@ -22,6 +22,7 @@ import { Todo } from '../../services/todo.service';
 import { CategoryService } from '../../services/category.service';
 import { Category } from '../../models/category.model';
 import { CategoryManagerComponent } from '../category-manager/category-manager.component';
+import { FeatureFlagService } from '../../../../core/services/feature-flag.service';
 
 /**
  * Interface for filter state
@@ -126,7 +127,8 @@ export class TodoListComponent implements OnInit, OnDestroy {
     private readonly categoryService: CategoryService,
     private readonly modalCtrl: ModalController,
     private readonly alertController: AlertController,
-    private readonly cdr: ChangeDetectorRef
+    private readonly cdr: ChangeDetectorRef,
+    private readonly featureFlags: FeatureFlagService
   ) {}
   
   /**
@@ -343,6 +345,10 @@ export class TodoListComponent implements OnInit, OnDestroy {
    */
   private onCategoryManagerDismissed(): void {
     this.cdr.markForCheck();
+  }
+
+  public canManageCategories(): boolean {
+    return this.featureFlags.isFeatureEnabled('enableCategoryManager');
   }
   
   /**

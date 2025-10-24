@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { TodoListComponent } from './features/todo/components/todo-list/todo-list.component';
 
 const routes: Routes = [
   {
@@ -10,7 +9,7 @@ const routes: Routes = [
   },
   {
     path: 'todos',
-    component: TodoListComponent
+    loadComponent: () => import('./features/todo/components/todo-list/todo-list.component').then(m => m.TodoListComponent)
   },
   {
     path: '**',
