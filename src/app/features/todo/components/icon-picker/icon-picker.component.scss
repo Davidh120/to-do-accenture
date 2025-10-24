@@ -1,0 +1,39 @@
+.icon-option {
+  width: 48px;
+  height: 48px;
+  margin: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--ion-color-light);
+
+  ion-icon {
+    font-size: 24px;
+    color: var(--ion-color-dark);
+  }
+
+  &:hover {
+    transform: scale(1.1);
+    background: var(--ion-color-light-shade);
+  }
+
+  &.selected {
+    background: var(--ion-color-primary);
+    
+    ion-icon {
+      color: var(--ion-color-primary-contrast);
+    }
+  }
+}
+
+.icon-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
