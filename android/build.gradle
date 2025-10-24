@@ -24,6 +24,26 @@ allprojects {
     }
 }
 
+// Ensure all Android modules compile with Java 17
+subprojects { subproject ->
+    afterEvaluate {
+        if (subproject.hasProperty('android')) {
+            subproject.android {
+                compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_17
+                    targetCompatibility JavaVersion.VERSION_17
+                }
+            }
+            // If Kotlin is present, align jvmTarget
+            subproject.tasks.matching { it.class.name == 'org.jetbrains.kotlin.gradle.tasks.KotlinCompile' }.all { task ->
+                task.kotlinOptions {
+                    jvmTarget = '17'
+                }
+            }
+        }
+    }
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
