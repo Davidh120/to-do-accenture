@@ -7,6 +7,7 @@ Aplicación To-Do con categorías, Firebase y Feature Flags (Remote Config), opt
 - Java 17 (para Android) + Android SDK (Android Studio)
 - Xcode (para iOS, solo macOS)
 - Cuenta de Firebase
+- Ionic CLI (npm install -g @ionic/cli)
 
 ## Configuración de entorno (.env)
 Crea un archivo `.env` en la raíz (usa `.env.example` como guía):
