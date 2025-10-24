@@ -7,7 +7,9 @@ export interface Todo {
   id: string;
   title: string;
   completed: boolean;
+  categoryId?: string;
   createdAt: number;
+  updatedAt: number;
 }
 
 @Injectable({
@@ -35,12 +37,14 @@ export class TodoService {
     return this.todosSubject.asObservable();
   }
 
-  async addTodo(title: string): Promise<Todo> {
+  async addTodo(title: string, categoryId?: string): Promise<Todo> {
     const newTodo: Todo = {
       id: Date.now().toString(),
       title,
       completed: false,
-      createdAt: Date.now()
+      categoryId,
+      createdAt: Date.now(),
+      updatedAt: Date.now()
     };
 
     const todos = [...this.todosSubject.value, newTodo];
@@ -52,7 +56,24 @@ export class TodoService {
 
   async toggleTodo(id: string): Promise<void> {
     const todos = this.todosSubject.value.map(todo => 
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      todo.id === id ? { 
+        ...todo, 
+        completed: !todo.completed,
+        updatedAt: Date.now() 
+      } : todo
+    );
+    
+    await this.storage.set(this.storageKey, todos);
+    this.todosSubject.next(todos);
+  }
+
+  async updateTodo(id: string, updates: Partial<Todo>): Promise<void> {
+    const todos = this.todosSubject.value.map(todo => 
+      todo.id === id ? { 
+        ...todo, 
+        ...updates,
+        updatedAt: Date.now() 
+      } : todo
     );
     
     await this.storage.set(this.storageKey, todos);
