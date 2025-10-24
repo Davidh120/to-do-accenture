@@ -5,9 +5,9 @@
   "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "ng",
-    "prestart": "node -r ts-node/register -r dotenv/config scripts/set-env.ts",
+    "prestart": "node -r dotenv/config scripts/set-env.js",
     "start": "ng serve",
-    "prebuild": "node -r ts-node/register -r dotenv/config scripts/set-env.ts",
+    "prebuild": "node -r dotenv/config scripts/set-env.js",
     "build": "ng build",
     "build:prod": "ionic build --prod",
     "cap:sync": "npx cap sync",

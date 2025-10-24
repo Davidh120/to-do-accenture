@@ -4,6 +4,7 @@ Aplicación To-Do con categorías, Firebase y Feature Flags (Remote Config), opt
 
 ## Requisitos
 - Node 22+
+- TypeScript 5+
 - Java 17 (para Android) + Android SDK (Android Studio)
 - Xcode (para iOS, solo macOS)
 - Cuenta de Firebase
