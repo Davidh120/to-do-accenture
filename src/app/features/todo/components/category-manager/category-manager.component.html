@@ -9,29 +9,39 @@
   </ion-toolbar>
   
   <ion-toolbar>
-    <ion-searchbar
-      placeholder="Add a new category..."
-      [(ngModel)]="newCategoryName"
-      (keyup.enter)="addCategory()"
-      [showCancelButton]="'focus'"
-      animated>
-      <div slot="end" class="category-actions">
-        <ion-button fill="clear" (click)="showIconPicker()">
-          <ion-icon [name]="newCategoryIcon"></ion-icon>
-        </ion-button>
-        <ion-button fill="clear" class="color-preview" [style.--background]="newCategoryColor">
-          <ion-icon name="color-palette" (click)="showColorPicker($event)"></ion-icon>
-        </ion-button>
-        <ion-button fill="clear" (click)="addCategory()" [disabled]="!newCategoryName.trim()">
-          <ion-icon slot="icon-only" name="add"></ion-icon>
-        </ion-button>
-      </div>
-    </ion-searchbar>
+    <div class="add-category-container">
+      <ion-item lines="none" class="add-category-item">
+        <ion-input
+          placeholder="Add a new category..."
+          [(ngModel)]="newCategoryName"
+          (keyup.enter)="addCategory()"
+          clearInput>
+        </ion-input>
+        <div class="category-actions">
+          <ion-button fill="clear" (click)="showIconPicker($event)" size="small">
+            <ion-icon [name]="newCategoryIcon"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" class="color-preview" [style.--background]="newCategoryColor" (click)="showColorPicker($event)" size="small">
+            <ion-icon name="color-palette" slot="icon-only"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" (click)="addCategory()" [disabled]="!newCategoryName.trim()" size="small">
+            <ion-icon slot="icon-only" name="add"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-item>
+    </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-list>
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="ion-text-center ion-padding">
+    <ion-spinner></ion-spinner>
+    <p>Loading categories...</p>
+  </div>
+
+  <!-- Categories List -->
+  <ion-list *ngIf="!isLoading">
     <ion-item-sliding *ngFor="let category of categories$ | async">
       <ion-item>
         <ion-icon 
@@ -45,27 +55,21 @@
           <p>Created {{ category.createdAt | date:'mediumDate' }}</p>
         </ion-label>
         
-        <ion-button fill="clear" (click)="editCategory(category)">
-          <ion-icon slot="icon-only" name="create-outline"></ion-icon>
-        </ion-button>
+        <ion-buttons slot="end">
+          <ion-button fill="clear" (click)="editCategory(category)">
+            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" color="danger" (click)="deleteCategory(category)">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button>
+        </ion-buttons>
       </ion-item>
-      
-      <ion-item-options side="end">
-        <ion-item-option color="danger" (click)="deleteCategory(category)">
-          <ion-icon slot="icon-only" name="trash"></ion-icon>
-        </ion-item-option>
-      </ion-item-options>
     </ion-item-sliding>
   </ion-list>
 
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="close()">
-      <ion-icon name="checkmark"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
 </ion-content>
 
-<ion-popover #colorPicker>
+<ion-popover [isOpen]="showColorPickerFlag" (didDismiss)="showColorPickerFlag = false">
   <ng-template>
     <ion-content class="ion-padding">
       <ion-grid>
@@ -73,8 +77,10 @@
           <ion-col size="4" *ngFor="let color of colorPalette">
             <div 
               class="color-option" 
+              [class.selected]="color === newCategoryColor"
               [style.background]="color"
-              (click)="selectColor(color)">
+              [style.border-color]="color === newCategoryColor ? 'var(--ion-color-dark)' : 'transparent'"
+              (click)="selectColor(color); showColorPickerFlag = false">
             </div>
           </ion-col>
         </ion-row>

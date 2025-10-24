@@ -49,6 +49,10 @@ export class CategoryService {
     return categories.find(cat => cat.id === id);
   }
 
+  getCategoryByIdSync(id: string): Category | undefined {
+    return this.categoriesSubject.value.find(cat => cat.id === id);
+  }
+
   async addCategory(name: string, color: string, icon: string): Promise<Category> {
     const newCategory: Category = {
       id: this.generateId(name),
