@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, PopoverController } from '@ionic/angular';
 
@@ -9,13 +9,11 @@ import { IonicModule, PopoverController } from '@ionic/angular';
   standalone: true,
   imports: [CommonModule, IonicModule]
 })
-export class IconPickerComponent implements OnInit {
+export class IconPickerComponent {
   @Input() icons: string[] = [];
-  @Input() selectedIcon: string = '';
+  @Input() selectedIcon = '';
 
-  constructor(private popoverCtrl: PopoverController) { }
-
-  ngOnInit() {}
+  private readonly popoverCtrl = inject(PopoverController);
 
   selectIcon(icon: string) {
     this.popoverCtrl.dismiss(icon);

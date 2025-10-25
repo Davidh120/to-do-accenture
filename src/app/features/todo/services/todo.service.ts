@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Storage } from '@ionic/storage-angular';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
@@ -19,7 +19,9 @@ export class TodoService {
   private storageKey = 'todos';
   private todosSubject = new BehaviorSubject<Todo[]>([]);
   
-  constructor(private storage: Storage) {
+  private readonly storage = inject(Storage);
+
+  constructor() {
     this.initStorage();
   }
 

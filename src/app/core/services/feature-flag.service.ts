@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { RemoteConfig, fetchAndActivate, getValue } from '@angular/fire/remote-config';
 import { environment } from '../../../environments/environment';
 
@@ -12,7 +12,7 @@ export class FeatureFlagService {
     enableCategoryManager: (environment as any).featureFlags?.enableCategoryManager ?? true
   };
 
-  constructor(private readonly rc: RemoteConfig) {}
+  private readonly rc = inject(RemoteConfig);
 
   async initialize(): Promise<void> {
     try {

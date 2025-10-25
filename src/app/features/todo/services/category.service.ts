@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Storage } from '@ionic/storage-angular';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
@@ -19,7 +19,9 @@ export class CategoryService {
     { id: 'health', name: 'Health', color: '#FF5722', icon: 'fitness', createdAt: Date.now(), updatedAt: Date.now() },
   ];
 
-  constructor(private storage: Storage) {
+  private readonly storage = inject(Storage);
+
+  constructor() {
     this.initStorage();
   }
 
