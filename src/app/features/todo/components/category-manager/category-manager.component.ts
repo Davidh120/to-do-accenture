@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, ModalController, AlertController, IonModal, PopoverController } from '@ionic/angular';
@@ -20,9 +20,16 @@ import { ColorPickerComponent } from '../color-picker/color-picker.component';
   ]
 })
 export class CategoryManagerComponent implements OnInit {
+  // Services and controllers
+  private readonly categoryService = inject(CategoryService);
+  private readonly modalController = inject(ModalController);
+  private readonly alertController = inject(AlertController);
+  private readonly popoverController = inject(PopoverController);
+
   categories$ = this.categoryService.categories$.pipe(
     tap((categories: Category[]) => console.log('Categories loaded:', categories))
   );
+  
   isLoading = true;
   newCategoryName = '';
   newCategoryColor = '#4CAF50';
@@ -54,13 +61,6 @@ export class CategoryManagerComponent implements OnInit {
 
   @ViewChild('colorPicker') colorPicker!: IonModal;
   @ViewChild('iconPicker') iconPicker!: IonModal;
-
-  constructor(
-    private categoryService: CategoryService,
-    private modalCtrl: ModalController,
-    private alertController: AlertController,
-    private popoverCtrl: PopoverController
-  ) {}
 
   ngOnInit() {
     // Ensure categories are loaded
@@ -144,7 +144,7 @@ export class CategoryManagerComponent implements OnInit {
 
   // Show the icon picker popover
   async showIconPicker(ev: any) {
-    const popover = await this.popoverCtrl.create({
+    const popover = await this.popoverController.create({
       component: IconPickerComponent,
       componentProps: {
         icons: this.availableIcons,
@@ -156,7 +156,7 @@ export class CategoryManagerComponent implements OnInit {
       translucent: true
     });
 
-    popover.onDidDismiss().then(({ data }) => {
+    popover.onDidDismiss().then(({ data }: { data?: string }) => {
       if (data) {
         this.newCategoryIcon = data;
       }
@@ -173,7 +173,7 @@ export class CategoryManagerComponent implements OnInit {
 
   // Show the color picker popover
   async showColorPickerPopover(ev: any) {
-    const popover = await this.popoverCtrl.create({
+    const popover = await this.popoverController.create({
       component: ColorPickerComponent,
       componentProps: {
         colors: this.colorPalette,
@@ -185,7 +185,7 @@ export class CategoryManagerComponent implements OnInit {
       translucent: true
     });
 
-    popover.onDidDismiss().then(({ data }) => {
+    popover.onDidDismiss().then(({ data }: { data?: string }) => {
       if (data) {
         this.newCategoryColor = data;
       }
@@ -207,6 +207,6 @@ export class CategoryManagerComponent implements OnInit {
   }
 
   close() {
-    this.modalCtrl.dismiss();
+    this.modalController.dismiss();
   }
 }

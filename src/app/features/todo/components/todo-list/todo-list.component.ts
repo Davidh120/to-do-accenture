@@ -4,7 +4,8 @@ import {
   ChangeDetectionStrategy, 
   ChangeDetectorRef,
   TrackByFunction,
-  OnDestroy
+  OnDestroy,
+  inject
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -71,19 +72,26 @@ const COMPONENT_CONFIG = {
   }
 })
 export class TodoListComponent implements OnInit, OnDestroy {
+  // Services - declared first to ensure they're initialized before use in properties
+  private readonly todoService = inject(TodoService);
+  private readonly categoryService = inject(CategoryService);
+  private readonly modalCtrl = inject(ModalController);
+  private readonly alertController = inject(AlertController);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly featureFlags = inject(FeatureFlagService);
+
   // Public properties
   public readonly todos$ = this.todoService.todos$;
   public readonly categories$ = this.categoryService.categories$;
+  
   public newTodoTitle = '';
   public selectedCategoryId: string | null = null;
   public showCompleted = true;
   public isLoading = false;
   
-  // Private properties
   private readonly filterSubject = new BehaviorSubject<TodoFilter>(DEFAULT_FILTER);
   private readonly destroy$ = new Subject<void>();
   
-  // Computed properties
   public readonly filteredTodos$: Observable<Todo[]> = combineLatest([
     this.todos$,
     this.filterSubject.pipe(distinctUntilChanged((prev, curr) => 
@@ -95,17 +103,10 @@ export class TodoListComponent implements OnInit, OnDestroy {
     map(([todos, filter]) => this.filterTodos(todos, filter)),
     shareReplay({ bufferSize: 1, refCount: true })
   );
-
-  /**
-   * TrackBy function for todo items
-   */
-  public trackByTodoId: TrackByFunction<Todo> = (index: number, todo: Todo) => todo.id;
-
-  /**
-   * TrackBy function for category items
-   */
-  public trackByCategoryId: TrackByFunction<Category> = (index: number, category: Category) => category.id;
   
+  public trackByTodoId: TrackByFunction<Todo> = (index: number, todo: Todo) => todo.id;
+  public trackByCategoryId: TrackByFunction<Category> = (index: number, category: Category) => category.id;
+
   /**
    * Filters todos based on the current filter state
    */
@@ -122,14 +123,7 @@ export class TodoListComponent implements OnInit, OnDestroy {
     });
   }
   
-  constructor(
-    private readonly todoService: TodoService,
-    private readonly categoryService: CategoryService,
-    private readonly modalCtrl: ModalController,
-    private readonly alertController: AlertController,
-    private readonly cdr: ChangeDetectorRef,
-    private readonly featureFlags: FeatureFlagService
-  ) {}
+
   
   /**
    * Clean up subscriptions
