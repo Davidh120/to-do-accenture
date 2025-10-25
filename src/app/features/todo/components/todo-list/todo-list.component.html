@@ -1,0 +1,117 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      <span class="title-text">My Tasks</span>
+    </ion-title>
+    
+    <ion-buttons slot="end">
+      <ion-button *ngIf="canManageCategories()" (click)="openCategoryManager()" fill="clear">
+        <ion-icon name="pricetags" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <!-- Category Filter -->
+  <div class="category-filter">
+    <ion-segment scrollable [value]="selectedCategoryId || 'all'" (ionChange)="filterByCategory($event)">
+      <ion-segment-button value="all" [class.segment-button-checked]="!selectedCategoryId">
+        <ion-label>All</ion-label>
+      </ion-segment-button>
+      <ng-container *ngIf="(categories$ | async) as categories">
+        <ion-segment-button *ngFor="let category of categories; trackBy: trackByCategoryId" 
+                          [value]="category.id"
+                          [class.segment-button-checked]="selectedCategoryId === category.id">
+          <ion-label>
+            <ion-icon [name]="category.icon" [style.color]="category.color"></ion-icon>
+            {{ category.name }}
+          </ion-label>
+        </ion-segment-button>
+      </ng-container>
+    </ion-segment>
+  </div>
+
+  <!-- Add Todo Input -->
+  <div class="add-todo-container">
+    <ion-item class="add-todo">
+      <ion-input
+        placeholder="Add a new task..."
+        [(ngModel)]="newTodoTitle"
+        (keyup.enter)="addTodo()"
+        clearInput>
+      </ion-input>
+      
+      <ion-select 
+        [(ngModel)]="selectedCategoryId" 
+        interface="popover" 
+        placeholder="Category"
+        cancelText="Cancel"
+        interfaceOptions="{ header: 'Select Category' }"
+        class="category-select">
+        <ion-select-option [value]="null">No Category</ion-select-option>
+        <ion-select-option *ngFor="let category of (categories$ | async); trackBy: trackByCategoryId" [value]="category.id">
+          <ion-icon [name]="category.icon" [style.color]="category.color"></ion-icon>
+          {{ category.name }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    
+    <ion-button 
+      (click)="addTodo()" 
+      [disabled]="!newTodoTitle.trim()" 
+      class="add-button"
+      fill="solid"
+      color="primary">
+      <ion-icon slot="start" name="add"></ion-icon>
+      Add
+    </ion-button>
+  </div>
+
+  <!-- Todo List -->
+  <div class="todo-list">
+    <ion-list lines="none">
+      <ion-item-sliding *ngFor="let todo of (filteredTodos$ | async); trackBy: trackByTodoId">
+        <ion-item [class.completed]="todo.completed" class="todo-item">
+          <ion-checkbox
+            slot="start"
+            [checked]="todo.completed"
+            (ionChange)="toggleTodo(todo.id)">
+          </ion-checkbox>
+          
+          <ion-label (click)="toggleTodo(todo.id)">
+            <h2>{{ todo.title }}</h2>
+            <div class="todo-meta">
+              <span class="todo-date">{{ todo.updatedAt | date:'mediumDate' }}</span>
+              <ion-badge *ngIf="todo.categoryId" 
+                    [style.--background]="getCategoryColor(todo) + '20'"
+                    [style.--color]="getCategoryColor(todo)">
+                <ion-icon [name]="getCategoryIcon(todo)"></ion-icon>
+                {{ getCategoryById(todo.categoryId)?.name }}
+              </ion-badge>
+            </div>
+          </ion-label>
+          
+          <ion-button fill="clear" (click)="deleteTodo(todo)" color="danger" class="delete-button">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-button>
+        </ion-item>
+        
+        <ion-item-options side="end">
+          <ion-item-option color="danger" (click)="deleteTodo(todo)">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+      
+      <ion-item *ngIf="(filteredTodos$ | async)?.length === 0" class="empty-state">
+        <ion-icon name="checkmark-done" slot="start"></ion-icon>
+        <ion-label class="ion-text-wrap">
+          <h2>No todos found</h2>
+          <p>Add a new todo using the form above</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
+  
+</ion-content>

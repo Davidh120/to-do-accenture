@@ -32,7 +32,10 @@
               }
             ],
             "styles": ["src/global.scss", "src/theme/variables.scss"],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "localforage"
+            ]
           },
           "configurations": {
             "production": {
@@ -44,8 +47,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "8kb",
+                  "maximumError": "16kb"
                 }
               ],
               "fileReplacements": [
@@ -136,7 +139,8 @@
   "cli": {
     "schematicCollections": [
       "@ionic/angular-toolkit"
-    ]
+    ],
+    "analytics": "b73a5e6b-38a3-47fc-8de5-49b4b9470077"
   },
   "schematics": {
     "@ionic/angular-toolkit:component": {
